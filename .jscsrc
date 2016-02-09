@@ -1,0 +1,65 @@
+{
+	"disallowFunctionDeclarations": true,
+	"validateParameterSeparator": ", ",
+	"validateLineBreaks": "LF",
+
+	"requireSpacesInsideParenthesizedExpression": true,
+	"requireSpacesInsideParentheses": {
+	    "all": true,
+	    "except": ["(", ")"]
+	},
+	"requireSpacesInsideObjectBrackets": {
+	    "allExcept": ["}"]
+	},
+	"requireSpacesInsideBrackets": {
+	    "allExcept": [ "[", "]", "{", "}" ]
+	},
+	"requireSpacesInFunctionExpression": {
+	    "beforeOpeningCurlyBrace": true
+	},
+	"requireSpacesInForStatement": true,
+	"requireSpacesInConditionalExpression": {
+	    "afterTest": true,
+	    "beforeConsequent": true,
+	    "afterConsequent": true,
+	    "beforeAlternate": true
+	},
+	"requireSpaceBetweenArguments": true,
+	"requireSpaceBeforeObjectValues": true,
+	"requireSpaceAfterKeywords": true,
+	"requireSpaceBeforeKeywords": true,
+	"requireSpaceBeforeBlockStatements": true,
+	"requireSpaceBeforeBinaryOperators": true,
+	"requireSpaceAfterLineComment": { "allExcept": ["#", "="] },
+	"requireSpaceAfterComma": {"allExcept": ["trailing"]},
+	"requireSpaceAfterBinaryOperators": true,
+	"requirePaddingNewlinesBeforeKeywords": true,
+	"requirePaddingNewLinesBeforeExport": true,
+	"requirePaddingNewLinesAfterUseStrict": true,
+	"requirePaddingNewLineAfterVariableDeclaration": false,
+	"requireObjectKeysOnNewLine": {
+	    "allExcept": ["sameLine"]
+	},
+	"requireLineBreakAfterVariableAssignment": true,
+	"requireDollarBeforejQueryAssignment": true,
+	"requireCommaBeforeLineBreak": true,
+	"requireCapitalizedConstructors": true,
+	"requireCapitalizedConstructors": true,
+	"requireCamelCaseOrUpperCaseIdentifiers": {
+		"ignoreProperties": true,
+		"allowedPrefix": ["_"],
+		"allowedSuffix": ["_"]
+	},
+	"requireBlocksOnNewline": 1,
+	"disallowYodaConditions": true,
+	"disallowTrailingWhitespace": true,
+	"disallowSpacesInCallExpression": true,
+	"disallowSpaceBeforeSemicolon": true,
+	"disallowSpaceBeforePostfixUnaryOperators": true,
+	"disallowSpaceAfterPrefixUnaryOperators": true,
+	"disallowMultipleSpaces": {"allowEOLComments": true},
+	"disallowMixedSpacesAndTabs": "smart",
+	"disallowKeywords": ["with"],
+	"esnext": true
+
+}
