@@ -44,13 +44,27 @@ var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHei
 var cameraHelper = new THREE.CameraHelper(camera)
 scene.add(cameraHelper)
 
+var params = {
+	DistanceToTarget: 2,
+	speedOrbit: 0.1,
+	rotx: 0,
+
+}
+
+var pointOfInterest = {
+	x: 0,
+	z: 0
+}
+
+//var Object2 
+
 /* stuff that will be initialized, put here */
 /* just some simple geometry */
 var box = new THREE.Mesh(new THREE.BoxGeometry(0.2,0.2,0.2), new THREE.MeshNormalMaterial())
 var sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2,0.2,0.2), new THREE.MeshNormalMaterial())
 var octohedron = new THREE.Mesh(new THREE.OctahedronGeometry(0.2), new THREE.MeshNormalMaterial())
 
-box.position.set(5,0,0)
+box.position.set(6,0,0)
 sphere.position.set(0,0,-4)
 octohedron.position.set(-2,0,3)
 
@@ -59,36 +73,32 @@ scene.add(sphere)
 scene.add(octohedron)
 
 /* gui stuff */
-Gui.add(box.position, 'x', -10, 10).name('box x')
-Gui.add(box.position, 'y', -10, 10).name('box y')
-Gui.add(box.position, 'z', -10, 10).name('box z')
 
-Gui.add(sphere.position, 'x', -10, 10).name('sphere x')
-Gui.add(sphere.position, 'y', -10, 10).name('sphere y')
-Gui.add(sphere.position, 'z', -10, 10).name('sphere z')
-
-Gui.add(octohedron.position, 'x', -10, 10).name('octohedron x')
-Gui.add(octohedron.position, 'y', -10, 10).name('octohedron y')
-Gui.add(octohedron.position, 'z', -10, 10).name('octohedron z')
+//Gui.add(octohedron.position, 'x', -10, 10).name('octohedron x')
 
 window.camera = camera
 window.stage = stage
 
-Gui.add(camera.position, 'x', -100, 100).name('camera position x')
-Gui.add(camera.position, 'y', -100, 100).name('camera position y')
-Gui.add(camera.position, 'z', -100, 100).name('camera position z')
-//
-Gui.add(camera.rotation, 'x', -Math.PI, Math.PI).name('camera rotation x')
-Gui.add(camera.rotation, 'y', -Math.PI, Math.PI).name('camera rotation y')
-Gui.add(camera.rotation, 'z', -Math.PI, Math.PI).name('camera rotation z')
+//Gui.add(camera.position, 'x', -100, 100).name('camera position x')
+
+//Gui.add(camera.rotation, 'x', -Math.PI, Math.PI).name('camera rotation x')
+
+//Gui.add(params, 'rotx', -3,3).name('RotationX')
+Gui.add(params, 'DistanceToTarget',0,10).name('DistanceToTarget')
+Gui.add(params, 'speedOrbit',0,0.3).name('speedOrbit')
+Gui.add(pointOfInterest, 'x',-2,2).name('pointOfInterestX')
+Gui.add(pointOfInterest, 'z', -2,2).name('pointOfInterestZ')
 
 
 
-// Gui.add(config, 'rotationSpeed', -0.5, 0.5, 0.01).name('rotate')
-// Gui.add(config, 'x', -2.5, 2.5, 0.01).name('rotate')
-// Gui.add(config, 'y', -2.5, 2.5, 0.01).name('rotate')
-// Gui.add(config, 'z', -2.5, 2.5, 0.01).name('rotate')
+var angle = 0
+var SpeedLastFrame = 0.1
+var effectiveSpeed = 0.1
 
+var movex = 0
+var movez = 0
+var oldx = 0
+var oldz = 0
 
 
 var run = function(time) {
@@ -96,19 +106,77 @@ var run = function(time) {
 	if(!start) start = lastTime = time
 	requestAnimationFrame(run)
 
+
 	/* timing */
 	var step = time-lastTime
 	if(step < fps) return
 	lastTime = time
-	var dt = step || 0
+	var dt = step || 0;
 
 
 	/* Stuff that will be done every time: put here */
+
+	// Smooth Rotation
+
+	if(params.speedOrbit > SpeedLastFrame){
+		effectiveSpeed *= 1.03
+	} 
+
+	else if(params.speedOrbit < SpeedLastFrame){
+		effectiveSpeed *= 0.97
+	}
+	else{
+		effectiveSpeed = params.speedOrbit
+	}
+	SpeedLastFrame = effectiveSpeed
+
+	
+	// Smooth Camera Movement 
+	
+	if(pointOfInterest.x>oldx){
+		movex += pointOfInterest.x + Math.abs(oldx-pointOfInterest.x)/30
+	}
+
+	else if(pointOfInterest.x<oldx){
+		movex += pointOfInterest.x - Math.abs(oldx+pointOfInterest.x)/30
+	}
+
+	else{
+		movex = pointOfInterest.x
+	}
+
+	if(pointOfInterest.z>oldz){
+		movez += pointOfInterest.z + Math.abs(oldz-pointOfInterest.z)/30
+	}
+ 
+	else if(pointOfInterest.z<oldz){
+		movez += pointOfInterest.z - Math.abs(oldz+pointOfInterest.z)/30
+	}
+
+	else{
+		movez = pointOfInterest.z
+	}
+	oldx = movex
+	oldz = movez
+
+
+	// Camera Rotation
+	angle += (1/Math.PI)*effectiveSpeed
+	camera.position.x = params.DistanceToTarget*Math.sin(angle)+movex
+	camera.position.z = params.DistanceToTarget*Math.cos(angle)+movez
+	camera.rotation.y = angle
+	//camera.rotation.x = params.rotx-Math.cos(angle)
+	//camera.rotation.z = params.rotz
+	//camera.rotation.z = params.rotx
 
 	camera.updateMatrixWorld()
 	cameraHelper.update()
 	stage.update(dt, time)
 	stage.render()
+	//stage.renderer.render(stage.scene,camera)
+
+	//controls.update()
+
 	if(__DEBUG) stats.update()
 }
 
