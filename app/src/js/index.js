@@ -47,7 +47,7 @@ scene.add(cameraHelper)
 var params = {
 	DistanceToTarget: 2,
 	speedOrbit: 0.1,
-	rotx: 0,
+	roty: 0,
 
 }
 
@@ -66,7 +66,7 @@ var octohedron = new THREE.Mesh(new THREE.OctahedronGeometry(0.2), new THREE.Mes
 
 box.position.set(6,0,0)
 sphere.position.set(0,0,-4)
-octohedron.position.set(-2,0,3)
+//octohedron.position.set(-2,0,3)
 
 scene.add(box)
 scene.add(sphere)
@@ -83,14 +83,16 @@ window.stage = stage
 
 //Gui.add(camera.rotation, 'x', -Math.PI, Math.PI).name('camera rotation x')
 
-//Gui.add(params, 'rotx', -3,3).name('RotationX')
+Gui.add(params, 'roty', -3,3).name('RotationY')
 Gui.add(params, 'DistanceToTarget',0,10).name('DistanceToTarget')
-Gui.add(params, 'speedOrbit',0,0.3).name('speedOrbit')
+//Gui.add(params, 'speedOrbit',0,0.3).name('speedOrbit')
 Gui.add(pointOfInterest, 'x',-2,2).name('pointOfInterestX')
 Gui.add(pointOfInterest, 'z', -2,2).name('pointOfInterestZ')
 
 
 
+
+var angleold = 0
 var angle = 0
 var SpeedLastFrame = 0.1
 var effectiveSpeed = 0.1
@@ -116,6 +118,8 @@ var run = function(time) {
 
 	/* Stuff that will be done every time: put here */
 
+	octohedron.position.set(movex/30,0,movez/30)
+	
 	// Smooth Rotation
 
 	if(params.speedOrbit > SpeedLastFrame){
@@ -156,14 +160,20 @@ var run = function(time) {
 	else{
 		movez = pointOfInterest.z
 	}
+	angle = Math.atan((movex-pointOfInterest.x)/Math.abs(movez-pointOfInterest.z))
 	oldx = movex
 	oldz = movez
 
-
 	// Camera Rotation
-	angle += (1/Math.PI)*effectiveSpeed
-	camera.position.x = params.DistanceToTarget*Math.sin(angle)+movex
-	camera.position.z = params.DistanceToTarget*Math.cos(angle)+movez
+
+	//angle = params.roty
+	camera.position.x = params.DistanceToTarget*Math.sin(angle)+movex/30
+	camera.position.z = params.DistanceToTarget*Math.cos(angle)+movez/30
+
+	//camera.position.x = movex/30
+	//camera.position.z = movez/30
+
+
 	camera.rotation.y = angle
 	//camera.rotation.x = params.rotx-Math.cos(angle)
 	//camera.rotation.z = params.rotz
