@@ -86,8 +86,8 @@ window.stage = stage
 Gui.add(params, 'roty', -3,3).name('RotationY')
 Gui.add(params, 'DistanceToTarget',0,10).name('DistanceToTarget')
 //Gui.add(params, 'speedOrbit',0,0.3).name('speedOrbit')
-Gui.add(pointOfInterest, 'x',-2,2).name('pointOfInterestX')
-Gui.add(pointOfInterest, 'z', -2,2).name('pointOfInterestZ')
+Gui.add(pointOfInterest, 'x',-4,4).name('pointOfInterestX')
+Gui.add(pointOfInterest, 'z', -4,4).name('pointOfInterestZ')
 
 
 var newAngle =0.2
@@ -129,6 +129,7 @@ var run = function(time) {
 
 	if (poiCurrentX != pointOfInterest.x){
 		poiNewX = poiCurrentX + (pointOfInterest.x - poiCurrentX)/60
+		newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) )
 	}
 	else{
 		poiNewX = pointOfInterest.x
@@ -137,6 +138,7 @@ var run = function(time) {
 
 	if (poiCurrentZ != pointOfInterest.z){
 		poiNewZ = poiCurrentZ + (pointOfInterest.z- poiCurrentZ)/60
+		newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) )
 	}
 	else{
 		poiNewZ = pointOfInterest.z
@@ -145,7 +147,7 @@ var run = function(time) {
 	poiCurrentX = poiNewX
 	poiCurrentZ = poiNewZ
 
-	newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) )
+	
 
 	camNewX = pointOfInterest.x + params.DistanceToTarget*Math.sin(newAngle)
 	camNewZ = pointOfInterest.z + params.DistanceToTarget*Math.cos(newAngle)
