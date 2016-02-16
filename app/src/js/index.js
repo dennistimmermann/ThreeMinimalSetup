@@ -53,7 +53,7 @@ var params = {
 
 var pointOfInterest = {
 	x: 0,
-	z: 0
+	z: 0,
 }
 
 //var Object2 
@@ -90,21 +90,21 @@ Gui.add(pointOfInterest, 'x',-2,2).name('pointOfInterestX')
 Gui.add(pointOfInterest, 'z', -2,2).name('pointOfInterestZ')
 
 
+var newAngle =0.2
 
+var poiCurrentX = 0
+var poiNewX = 0
 
-var angleOld = 0
-var currentAngle = 0
-var newAngle = 0
+var poiCurrentZ = 0
+var poiNewZ= 0
 
-var angle = 0
+var camCurrentX = 0
+var camNewX = 0
+var camOldX = 0
 
-var SpeedLastFrame = 0.1
-var effectiveSpeed = 0.1
-
-var movex = 0
-var movez = 0
-var oldx = 0
-var oldz = 0
+var camCurrentZ = 0
+var camNewZ = 0
+var camOldZ = 0
 
 
 var run = function(time) {
@@ -122,82 +122,55 @@ var run = function(time) {
 
 	/* Stuff that will be done every time: put here */
 
-	octohedron.position.set(movex/30,0,movez/30)
-	
-	// Smooth Rotation
-
-	if(params.speedOrbit > SpeedLastFrame){
-		effectiveSpeed *= 1.03
-	} 
-
-	else if(params.speedOrbit < SpeedLastFrame){
-		effectiveSpeed *= 0.97
-	}
-	else{
-		effectiveSpeed = params.speedOrbit
-	}
-
-	SpeedLastFrame = effectiveSpeed
-
-	
+	octohedron.position.set(pointOfInterest.x,0,pointOfInterest.z)
+	sphere.position.set(poiCurrentX,0,poiCurrentZ)
+	box.rotation.x = newAngle
 	// Smooth Camera Movement 
 
-	if(pointOfInterest.x>oldx){
-		movex += pointOfInterest.x + Math.abs(oldx-pointOfInterest.x)/30
-	}
-
-	else if(pointOfInterest.x<oldx){
-		movex += pointOfInterest.x - Math.abs(oldx+pointOfInterest.x)/30
-	}
-
-	/*else{
-		movex = pointOfInterest.x
-	}*/
-
-	if(pointOfInterest.z>oldz){
-		movez += pointOfInterest.z + Math.abs(oldz-pointOfInterest.z)/30
-	}
- 
-	else if(pointOfInterest.z<oldz){
-		movez += pointOfInterest.z - Math.abs(oldz+pointOfInterest.z)/30
-	}
-
-	else{
-		movez = pointOfInterest.z
-	}
-
-	// Smooth Camera Rotation
-
-	newAngle = Math.atan((oldx-movex)/(oldz-movez))
-	
-
-	if (newAngle > currentAngle){
-		currentAngle += Math.abs(newAngle-currentAngle)/60
-	}
-	else if (newAngle < currentAngle) {
-		currentAngle -= Math.abs(newAngle-currentAngle)/60
+	if (poiCurrentX != pointOfInterest.x){
+		poiNewX = poiCurrentX + (pointOfInterest.x - poiCurrentX)/60
 	}
 	else{
-		currentAngle = angleOld
+		poiNewX = pointOfInterest.x
 	}
-	angleOld = currentAngle
-	newAngle = currentAngle
 
 
-	
-	oldz = movez
-	oldx = movex
+	if (poiCurrentZ != pointOfInterest.z){
+		poiNewZ = poiCurrentZ + (pointOfInterest.z- poiCurrentZ)/60
+	}
+	else{
+		poiNewZ = pointOfInterest.z
+	}
+
+	poiCurrentX = poiNewX
+	poiCurrentZ = poiNewZ
+
+	newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) )
+
+	camNewX = pointOfInterest.x + params.DistanceToTarget*Math.sin(newAngle)
+	camNewZ = pointOfInterest.z + params.DistanceToTarget*Math.cos(newAngle)
+
+	if (camOldX != camNewX){
+		camCurrentX = camOldX + (camNewX - camOldX)/120
+	}
+
+	if (camOldZ != camNewZ){
+		camCurrentZ = camOldZ + (camNewZ - camOldZ)/120
+	}
+	camOldX = camCurrentX
+	camOldZ = camCurrentZ
+
 
 	// Camera Rotation
 
-	camera.position.x = params.DistanceToTarget*Math.sin(currentAngle)+movex/30
-	camera.position.z = params.DistanceToTarget*Math.cos(currentAngle)+movez/30
+	camera.position.x = camCurrentX
+	camera.position.z = camCurrentZ
 
 	//camera.position.x = movex/30
 	//camera.position.z = movez/30
 
 
-	camera.rotation.y = currentAngle
+	camera.rotation.y = newAngle
 	//camera.rotation.x = params.rotx-Math.cos(angle)
 	//camera.rotation.z = params.rotz
 	//camera.rotation.z = params.rotx
