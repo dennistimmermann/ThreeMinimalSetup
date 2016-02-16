@@ -129,7 +129,12 @@ var run = function(time) {
 
 	if (poiCurrentX != pointOfInterest.x){
 		poiNewX = poiCurrentX + (pointOfInterest.x - poiCurrentX)/60
-		newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) )
+		if (poiNewZ - camCurrentZ<0){
+			newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) )
+		}
+		else{
+			newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) ) - Math.PI
+		}
 	}
 	else{
 		poiNewX = pointOfInterest.x
@@ -138,7 +143,12 @@ var run = function(time) {
 
 	if (poiCurrentZ != pointOfInterest.z){
 		poiNewZ = poiCurrentZ + (pointOfInterest.z- poiCurrentZ)/60
-		newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) )
+		if (poiNewZ - camCurrentZ<0){
+			newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) )
+		}
+		else{
+			newAngle = Math.atan( ( poiNewX - camCurrentX ) / ( poiNewZ- camCurrentZ ) ) - Math.PI
+		}
 	}
 	else{
 		poiNewZ = pointOfInterest.z
