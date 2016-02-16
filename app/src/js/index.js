@@ -150,9 +150,9 @@ var run = function(time) {
 		movex += pointOfInterest.x - Math.abs(oldx+pointOfInterest.x)/30
 	}
 
-	else{
+	/*else{
 		movex = pointOfInterest.x
-	}
+	}*/
 
 	if(pointOfInterest.z>oldz){
 		movez += pointOfInterest.z + Math.abs(oldz-pointOfInterest.z)/30
@@ -168,8 +168,7 @@ var run = function(time) {
 
 	// Smooth Camera Rotation
 
-	newAngle = Math.atan((oldx-movex)/(oldz-movez))+ Math.atan((oldz-movez)/(oldx-movex))
-
+	newAngle = Math.atan((oldx-movex)/(oldz-movez))
 	
 
 	if (newAngle > currentAngle){
@@ -178,7 +177,10 @@ var run = function(time) {
 	else if (newAngle < currentAngle) {
 		currentAngle -= Math.abs(newAngle-currentAngle)/60
 	}
-
+	else{
+		currentAngle = angleOld
+	}
+	angleOld = currentAngle
 	newAngle = currentAngle
 
 
