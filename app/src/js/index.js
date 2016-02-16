@@ -92,8 +92,12 @@ Gui.add(pointOfInterest, 'z', -2,2).name('pointOfInterestZ')
 
 
 
-var angleold = 0
+var angleOld = 0
+var currentAngle = 0
+var newAngle = 0
+
 var angle = 0
+
 var SpeedLastFrame = 0.1
 var effectiveSpeed = 0.1
 
@@ -132,11 +136,12 @@ var run = function(time) {
 	else{
 		effectiveSpeed = params.speedOrbit
 	}
+
 	SpeedLastFrame = effectiveSpeed
 
 	
 	// Smooth Camera Movement 
-	
+
 	if(pointOfInterest.x>oldx){
 		movex += pointOfInterest.x + Math.abs(oldx-pointOfInterest.x)/30
 	}
@@ -160,21 +165,37 @@ var run = function(time) {
 	else{
 		movez = pointOfInterest.z
 	}
-	angle = Math.atan((movex-pointOfInterest.x)/Math.abs(movez-pointOfInterest.z))
-	oldx = movex
+
+	// Smooth Camera Rotation
+
+	newAngle = Math.atan((oldx-movex)/(oldz-movez))+ Math.atan((oldz-movez)/(oldx-movex))
+
+	
+
+	if (newAngle > currentAngle){
+		currentAngle += Math.abs(newAngle-currentAngle)/60
+	}
+	else if (newAngle < currentAngle) {
+		currentAngle -= Math.abs(newAngle-currentAngle)/60
+	}
+
+	newAngle = currentAngle
+
+
+	
 	oldz = movez
+	oldx = movex
 
 	// Camera Rotation
 
-	//angle = params.roty
-	camera.position.x = params.DistanceToTarget*Math.sin(angle)+movex/30
-	camera.position.z = params.DistanceToTarget*Math.cos(angle)+movez/30
+	camera.position.x = params.DistanceToTarget*Math.sin(currentAngle)+movex/30
+	camera.position.z = params.DistanceToTarget*Math.cos(currentAngle)+movez/30
 
 	//camera.position.x = movex/30
 	//camera.position.z = movez/30
 
 
-	camera.rotation.y = angle
+	camera.rotation.y = currentAngle
 	//camera.rotation.x = params.rotx-Math.cos(angle)
 	//camera.rotation.z = params.rotz
 	//camera.rotation.z = params.rotx
