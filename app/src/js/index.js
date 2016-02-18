@@ -85,12 +85,12 @@ window.stage = stage
 
 Gui.add(params, 'roty', -3,3).name('RotationY')
 Gui.add(params, 'DistanceToTarget',0,10).name('DistanceToTarget')
-//Gui.add(params, 'speedOrbit',0,0.3).name('speedOrbit')
+Gui.add(params, 'speedOrbit',0,10).name('speedOrbit')
 Gui.add(pointOfInterest, 'x',-4,4).name('pointOfInterestX')
 Gui.add(pointOfInterest, 'z', -4,4).name('pointOfInterestZ')
 
 
-var newAngle =0.2
+var newAngle =0
 
 var poiCurrentX = 0
 var poiNewX = 0
@@ -105,6 +105,9 @@ var camOldX = 0
 var camCurrentZ = 0
 var camNewZ = 0
 var camOldZ = 0
+
+var dist = 0
+var orbitSpeed = 0
 
 
 var run = function(time) {
@@ -127,6 +130,8 @@ var run = function(time) {
 	box.rotation.x = newAngle
 	// Smooth Camera Movement 
 
+	dist = Math.sqrt(Math.pow(poiNewX-camCurrentX,2)+Math.pow(poiNewZ-camCurrentZ,2))
+
 	if (poiCurrentX != pointOfInterest.x){
 		poiNewX = poiCurrentX + (pointOfInterest.x - poiCurrentX)/60
 		if (poiNewZ - camCurrentZ<0){
@@ -139,7 +144,6 @@ var run = function(time) {
 	else{
 		poiNewX = pointOfInterest.x
 	}
-
 
 	if (poiCurrentZ != pointOfInterest.z){
 		poiNewZ = poiCurrentZ + (pointOfInterest.z- poiCurrentZ)/60
@@ -154,10 +158,16 @@ var run = function(time) {
 		poiNewZ = pointOfInterest.z
 	}
 
+	if (Math.abs(camOldX-camNewX)+Math.abs(camOldZ.camNewZ) < 1 && orbitSpeed < speedOrbit){
+		orbitSpeed += 0.1
+	}
+	if (Math.abs(camOldX-camNewX)+Math.abs(camOldZ.camNewZ) > 1 && orbitSpeed > speedOrbit){
+		orbitSpeed -= 0.1
+	}
+	newAngle += orbitSpeed
+
 	poiCurrentX = poiNewX
 	poiCurrentZ = poiNewZ
-
-	
 
 	camNewX = pointOfInterest.x + params.DistanceToTarget*Math.sin(newAngle)
 	camNewZ = pointOfInterest.z + params.DistanceToTarget*Math.cos(newAngle)
